@@ -1,0 +1,149 @@
+
+define User {
+
+    nb_partners:0,
+    capital: 0,
+    ca: 0,
+
+    constructor: function(nb_partners, capital, ca) {
+        this.nb_partners=nb_partners;
+        this.capital=capital;
+        this.ca=ca;
+
+    }
+
+}
+
+define Status_law {
+
+    name: null,
+    constructor: function(name){
+            this.name = name;
+        }
+}
+
+
+rule EURL {
+
+    when {
+
+        u: User u.nb_partners == 1;
+
+
+    } then {
+
+        var s= new Status_law("EURL");
+        console.log(s.name);
+        assert(s);
+
+    }
+}
+
+
+rule SASU {
+
+    when {
+
+        u: User u.nb_partners == 1;
+
+    } then {
+
+        var s= new Status_law("SASU");
+        console.log(s.name);
+        assert(s);
+    }
+}
+
+
+rule SARL {
+
+    when {
+
+        not(u: User u.nb_partners< 2);
+        not(u: User u.nb_partners> 100);
+
+
+    } then {
+
+        var s= new Status_law("SARL");
+        console.log(s.name);
+        assert(s);
+    }
+}
+
+
+
+rule SAS {
+
+    when {
+
+        not( u: User u.nb_partners<2);
+
+    } then {
+
+        var s= new Status_law("SAS");
+        console.log(s.name);
+        assert(s);
+    }
+}
+
+rule SA {
+
+    when {
+
+        not(u: User u.nb_partners >7);
+        not(c: User c.capital <37000);
+
+
+
+    } then {
+
+        var s= new Status_law("SA");
+        console.log(s.name);
+        assert(s);
+    }
+}
+rule EI {
+
+    when {
+
+        u: User u.nb_partners == 0;
+
+    } then {
+
+        var s= new Status_law("EI");
+        console.log(s.name);
+        assert(s);
+    }
+}
+
+
+rule EIRL {
+
+    when {
+
+        u: User u.nb_partners == 0;
+
+    } then {
+
+        var s= new Status_law("EIRL");
+        console.log(s.name);
+        assert(s);
+    }
+}
+
+
+rule Entreprenor {
+
+    when {
+
+        u: User u.nb_partners == 0;
+
+    } then {
+
+        var s= new Status_law("Entreprenor");
+        console.log(s.name);
+        assert(s);
+    }
+}
+
