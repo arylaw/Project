@@ -1,13 +1,17 @@
 
 define User {
 
+
     nb_partners:0,
     capital: 0,
+    activity: null,
     ca: 0,
 
-    constructor: function(nb_partners, capital, ca) {
+
+    constructor: function(nb_partners,capital,activity, ca) {
         this.nb_partners=nb_partners;
         this.capital=capital;
+        this.activity= activity;
         this.ca=ca;
 
     }
@@ -17,9 +21,18 @@ define User {
 define Status_law {
 
     name: null,
-    constructor: function(name){
-            this.name = name;
-        }
+    constructor: function(name) {
+        this.name = name;
+    }
+}
+
+
+define Activity {
+
+    name: null,
+    constructor: function(name) {
+        this.name= name;
+    }
 }
 
 
@@ -147,3 +160,149 @@ rule Entreprenor {
     }
 }
 
+rule autoCommercial {
+
+    when {
+
+        u: User u.ca <= 81500 && u.activity == "commerciale";
+
+    } then {
+
+        var a = new Activity("autoCommerciale");
+        console.log(a.name);
+        assert(a);
+
+    }
+
+}
+
+rule SocieteCommercial {
+
+    when {
+        u: User u.ca >= 81500 &&  u.activity == "commerciale";
+
+    }then {
+
+        var a = new Activity("societeCommerciale");
+        console.log(a.name);
+        assert(a);
+
+
+    }
+
+}
+
+
+rule autoArtisanale {
+
+    when {
+
+        u: User u.ca <=32600 && u.activity == "artisanale";
+
+    }then {
+
+        var a = new Activity("autoArtisanale");
+        console.log(a.name);
+        assert(a);
+
+     }
+
+
+}
+
+
+rule autoLiberale {
+
+    when {
+
+        u: User u.ca <=32600 && u.activity == "liberale";
+
+    }then {
+
+        var a = new Activity("autoLiberale");
+        console.log(a.name);
+        assert(a);
+
+     }
+
+
+}
+
+
+rule societeCivile {
+
+    when {
+
+        or(
+            u: User u.activity == "liberale",
+            u: User u.activity == "artisanale",
+            u: User u.activity == "agricole",
+        );
+
+        not( u: User u.nb_partners<2);
+
+    }then {
+
+        var a = new Activity("societeCivile");
+        console.log(a.name);
+        assert(a);
+
+     }
+
+}
+
+
+rule SCP{
+
+     when {
+
+        a: Activity a.name == "societe civile";
+        u: User u.activity == "liberale";
+        not( u: User u.nb_partners<2);
+
+    }then {
+
+        var a = new Activity("groupeliberal");
+        console.log(a.name);
+        assert(a);
+
+     }
+
+}
+
+
+rule GAEC{
+
+     when {
+
+        a: Activity a.name == "societe civile";
+        u: User u.activity == "agricole" && u.capital >= 1500;
+
+    }then {
+
+        var a = new Activity("groupeAgriculteur");
+        console.log(a.name);
+        assert(a);
+     }
+}
+
+
+
+rule EARL{
+
+     when {
+
+        a: Activity a.name == "societe civile";
+        u: User u.capital >= 7500 && u.activity == "agricole";
+        not( u: User u.nb_partners<1);
+        not( u: User u.nb_partners >10);
+
+    }then {
+
+        var a = new Activity("exploitationAgricole");
+        console.log(a.name);
+        assert(a);
+
+     }
+
+}
